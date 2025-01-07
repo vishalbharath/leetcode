@@ -1,29 +1,22 @@
 class Solution {
     public int myAtoi(String s) {
-        s = s.trim();
-        if (s.isEmpty()) {
-            return 0;
-        }
-
-        int ans = 0, i = 0;
-        boolean neg = s.charAt(0) == '-';
-        boolean pos = s.charAt(0) == '+';
-
-        if (neg || pos) {
+        int INT_MAX = 2147483647, INT_MIN = -2147483648;
+        int i = 0, n = s.length(), sign = 1, result = 0;
+        while (i < n && s.charAt(i) == ' ')
+            i++;
+        if (i < n && (s.charAt(i) == '-' || s.charAt(i) == '+')) {
+            sign = s.charAt(i) == '-' ? -1 : 1;
             i++;
         }
-
-        while (i < s.length() && Character.isDigit(s.charAt(i))) {
+        while (i < n && Character.isDigit(s.charAt(i))) {
             int digit = s.charAt(i) - '0';
-
-            if (ans > Integer.MAX_VALUE / 10 || (ans == Integer.MAX_VALUE / 10 && digit > Integer.MAX_VALUE % 10)) {
-                return neg ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+            if (result > (INT_MAX - digit) / 10) {
+                return sign == 1 ? INT_MAX : INT_MIN;
             }
-
-            ans = ans * 10 + digit;
+            result = result * 10 + digit;
             i++;
         }
-
-        return neg ? -ans : ans;
+        return sign * result;
     }
 }
+
