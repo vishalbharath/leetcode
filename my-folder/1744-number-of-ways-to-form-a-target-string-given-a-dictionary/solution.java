@@ -1,37 +1,27 @@
+import java.util.*;
 class Solution {
-    public static final int MOD=1000000007;
     public int numWays(String[] words, String target) {
-        int n = words[0].length();
+        final int MOD = 1_000_000_007;
+        int n = words[0].length(); 
         int m = target.length();
-        if (m > n) {
-            return 0;
-        }
-        int[][] freq = new int[n][26];
-        for (String s : words) {
-            for (int i = 0; i < n; i++) {
-                freq[i][s.charAt(i) - 'a']++;
+        int[][] charFrequency = new int[n][26];
+        for (String word : words) {
+            for (int j = 0; j < n; j++) {
+                charFrequency[j][word.charAt(j) - 'a']++;
             }
         }
-        return f(n, m, target, freq,new Integer[n+1][m+1]);
-    }
+        int[] dp = new int[m + 1];
+        dp[0] = 1; 
+        for (int col = 0; col < n; col++) {
+            for (int targetIndex = m - 1; targetIndex >= 0; targetIndex--) {
+                char targetChar = target.charAt(targetIndex);
+                int count = charFrequency[col][targetChar - 'a'];
 
-    int f(int i, int j, String target, int[][] freq,Integer[][] dp) {
-        if( i < j ){
-            return 0;
+                if (count > 0) {
+                    dp[targetIndex + 1] = (int) ((dp[targetIndex + 1] + (long) dp[targetIndex] * count % MOD) % MOD);
+                }
+            }
         }
-        if (j == 0 ) {
-            return 1;
-        }
-        if(dp[i][j]!=null){
-            return dp[i][j];
-        }
-        // choose
-        int ch = 0, nc = 0;
-        if (freq[i - 1][target.charAt(j - 1) - 'a'] != 0) {
-            ch = (int)(((long)freq[i - 1][target.charAt(j - 1) - 'a'] * f(i - 1, j - 1, target, freq,dp))%MOD);
-        }
-        nc = f(i - 1, j, target, freq,dp);
-        return dp[i][j]=(ch + nc)%MOD;
-
+        return dp[m];
     }
 }
